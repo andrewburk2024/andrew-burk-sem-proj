@@ -33,9 +33,7 @@ def run():
         page_icon="👋",
     )
 
-    st.write("# Welcome to Streamlit! 👋")
-
-    st.sidebar.success("Select a demo above.")
+    st.write("# Andrew Burk's ECON 8320 Semester Project")
 
     st.markdown(
         """
