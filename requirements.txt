@@ -3,6 +3,6 @@ numpy
 pandas
 pydeck
 streamlit
-plotly==5.21.0
+plotly
 datetime
 requests
