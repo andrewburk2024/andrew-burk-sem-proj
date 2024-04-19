@@ -51,7 +51,7 @@ def run():
         - HRHTYPE Household-type of family/single individual;
         - PEEDUCA Demographics-highest level of school completed;
         - PRFTLF Labor Force-full time/part-time;
-        - PTERNH1C Earnings-hourly pay rate, excluding overtime
+        - PTERNH1O Earnings-hourly pay rate,amount
 
         Data is from Current Population Survey from the US Census
     """
