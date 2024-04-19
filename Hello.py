@@ -55,6 +55,8 @@ def run():
 
         Data is from Current Population Survey from the US Census
 
+        *Note: Due to changing FIPS codes for metro areas and their sizes, data may not be available for every year*
+
     """
     )
     #read the csv
