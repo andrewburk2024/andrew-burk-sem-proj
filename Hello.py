@@ -7,6 +7,11 @@ Original file is located at
     https://colab.research.google.com/drive/1ABgoQIwh7dVA-uACo1q-kb8IzgS-g1EE
 """
 
+from google.colab import drive
+drive.mount('/content/drive')
+
+file_path = "/content/drive/MyDrive/Colab Notebooks/ECON 8320/Semester Project/test/CENSUS_CPS_DATA.csv"
+
 # Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,15 +28,14 @@ Original file is located at
 
 import streamlit as st
 from streamlit.logger import get_logger
+import pandas as pd
+import numpy as np
+import plotly.express as px
 
 LOGGER = get_logger(__name__)
 
 
 def run():
-    st.set_page_config(
-        page_title="Hello",
-        page_icon="👋",
-    )
 
     st.write("# Andrew Burk's ECON 8320 Semester Project")
 
@@ -51,11 +55,75 @@ def run():
         - HRHTYPE Household-type of family/single individual;
         - PEEDUCA Demographics-highest level of school completed;
         - PRFTLF Labor Force-full time/part-time;
-        - PTERNH1O Earnings-hourly pay rate,amount
+        - PTERNH1C Earnings-hourly pay rate, excluding overtime
 
         Data is from Current Population Survey from the US Census
+
     """
     )
+    df = pd.read_csv("https://github.com/andrewburk2024/andrew-burk-sem-proj/raw/main/CENSUS_CPS_DATA.csv")
+    columns = ["GTCBSA", "PEERNLAB", "HEFAMINC", "HETENURE", "HRHTYPE", "PEEDUCA", "PRFTLF", "PTERNH1O", "Year", "Month", "Metro Area"]
+    df_dropdown = df["Metro Area"].unique()
+    df_dropdown_sort = df_dropdown.sort()
+    option = st.selectbox(label = "Metro Area", options = df_dropdown)
+
+
+if __name__ == "__main__":
+    run()
+
+# Copyright (c) Streamlit Inc. (2018-2022) Snowflake Inc. (2022)
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+
+import streamlit as st
+from streamlit.logger import get_logger
+import plotly.figure_factory as ff
+import pandas as pd
+import numpy as np
+
+LOGGER = get_logger(__name__)
+
+
+def run():
+  st.set_page_config(
+      page_title="Hello",
+      page_icon="👋",
+  )
+
+  st.write("# Andrew Burk's ECON 8320 Semester Project")
+
+  st.markdown(
+      """
+      This dashboard will allow you to examine demographic variables
+      based on union membership.
+
+      In order to do this chose a metro area from the drop down
+      and the line graphs will be populated with the chosen city's
+      information.
+
+      The demographics chosen for this demonstration are:
+      - PEERNLAB union member,y/n
+      - HEFAMINC Household-total family income in past 12 month
+      - HETENURE Household-own/rent living quarters;
+      - HRHTYPE Household-type of family/single individual;
+      - PEEDUCA Demographics-highest level of school completed;
+      - PRFTLF Labor Force-full time/part-time;
+      - PTERNH1C Earnings-hourly pay rate, excluding overtime
+
+      Data is from Current Population Survey from the US Census
+  """
+  )
+
 
 
 if __name__ == "__main__":
