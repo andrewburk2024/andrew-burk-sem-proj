@@ -18,4 +18,5 @@ The demographics chosen for this demonstration are:
 
 Data is from Current Population Survey from the US Census
 
-Check it out on [Streamlit Community Cloud]([https://st-hello-app.streamlit.app/](https://andrewburksemproj-oqet4efc0xo.streamlit.app/)
+Check it out on [Streamlit Community Cloud]([https://st-hello-app.streamlit.app/]
+https://andrewburksemproj-oqet4efc0xo.streamlit.app/
