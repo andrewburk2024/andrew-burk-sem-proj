@@ -40,9 +40,11 @@ def run():
         This dashboard will allow you to examine demographic variables
         based on union membership.
 
-        In order to do this chose a metro area from the drop down
+        INSTRUCTIONS: In order to do this chose a metro area from the drop down
         and the line graphs will be populated with the chosen city's
-        information.
+        information. Each graph has the capability to zoom in 
+        to further examine some of the intricacies. Double-click to leave zoomed view.
+        Double click on variable in legend to isolate that variable on the figure.
 
         The demographics chosen for this demonstration are:
         - PEERNLAB union member,y/n
@@ -53,7 +55,7 @@ def run():
         - PRFTLF Labor Force-full time/part-time;
         - PTERNH1O Earnings-hourly pay rate, excluding overtime
 
-        Data is from Current Population Survey from the US Census
+        *Data is from Current Population Survey from the US Census*
 
         *Note: Due to changing FIPS codes for metro areas and their sizes, data may not be available for every year*
 
@@ -126,22 +128,36 @@ def run():
                       title=title1nu, labels={"Year": "Year", "HEFAMINC": "Total Family Income"},
                       category_orders={"HEFAMINC": list(family_income.values())})
 
-    st.plotly_chart(fig1u)
-    st.plotly_chart(fig1nu)
+    #split the two figures into tabs that can be switched between
+    tab1, tab2 = st.tabs(["Union Membership", "Non-Union Membership"])
+    with tab1:
+        #use union membership figure
+        st.plotly_chart(fig1u)
+    with tab2:
+        #use non-union figure
+        st.plotly_chart(fig1nu)
 
-    ###FOURTH FIGURE - BAR
+    ###FOURTH FIGURE - HISTOGRAM
     #buiding union membership bar graph looking at HETENURE
     df_selected_metro2 = df[df["Metro Area"] == option]
 
     #title for owning/renting    
     title2 = f"Non-Union and Union Member Own or Rent for {option}"
     housing_labels= {
-        "3": "Occupied without payment of cash rent",
-        "-1": "Not in Universe",
-        "2": "Rented for cash",
-        "1": "Owned Or Being Bought By A Hh Member"
+        3: "Occupied without payment of cash rent",
+        -1: "Not in Universe",
+        2: "Rented for cash",
+        1: "Owned Or Being Bought By A Hh Member"
     }
-    
+    #matching union codes with labels
+    df_selected_metro2["PEERNLAB"] = df_selected_metro2["PEERNLAB"].map(union_labels)
+    #matching housing labels
+    df_selected_metro2["HETENURE"] = df_selected_metro2["HETENURE"].map(housing_labels)
+    #building figure
+    fig2 = px.histogram(df_selected_metro2, x = "Year", color = "PEERNLAB", title = title2,
+                        pattern_shape = "HETENURE")
+
+    st.plotly_chart(fig2)
 
     ###FIFTH/SIXTH FIGURE - HISTOGRAM
     #buiding union membership histograms looking at HRHTYPE
@@ -182,8 +198,14 @@ def run():
                       title=title3nu, labels={"Year": "Year", "HRHTYPE": "Family Type"},
                       category_orders={"HRHTYPE": list(household_type.values())})
 
-    st.plotly_chart(fig3u)
-    st.plotly_chart(fig3nu) 
+    #split two figures and place on own tabs
+    tab3, tab4 = st.tabs(["Union Membership", "Non-Union Membership"])
+    with tab3:
+        #use union membership figure
+        st.plotly_chart(fig3u)
+    with tab4:
+        #use non-union figure
+        st.plotly_chart(fig3nu) 
 
     ###SEVENTH/EIGHTH FIGURE - HISTOGRAM
     #buiding union membership histograms looking at PEEDUCA
@@ -232,9 +254,15 @@ def run():
                       title=title4nu, labels={"Year": "Year", "PEEDUCA": "Education"},
                       category_orders={"PEEDUCA": list(household_type.values())})
 
+    #split two figures and place on own tabs
+    tab5, tab6 = st.tabs(["Union Membership", "Non-Union Membership"])
+    with tab5:
+        #use union figure
+        st.plotly_chart(fig4u)
 
-    st.plotly_chart(fig4u)
-    st.plotly_chart(fig4nu)
+    with tab6:
+        #use non-union figure
+        st.plotly_chart(fig4nu)
 
     ###NINTH FIGURE - SCATTERPLOT
     #buiding union membership scatterplot looking at PRFTLF
@@ -265,7 +293,8 @@ def run():
 
     #building figure
     fig6 = px.violin(df_selected_metro6, x = "Year", y = "PTERNH1O", color = "PEERNLAB",
-                     labels = {"PTERNH1O" : "Hourly Wage"})
+                     labels = {"PTERNH1O" : "Hourly Wage"}, 
+                     title = f"Union and Non-Union Memebership and Hourly Wage for {option}")
 
     st.plotly_chart(fig6)
 
