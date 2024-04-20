@@ -130,7 +130,7 @@ def run():
     st.plotly_chart(fig1nu)
 
     ###FOURTH FIGURE - BAR
-    #buiding union membership looking at HETENURE
+    #buiding union membership bar graph looking at HETENURE
     df_selected_metro2 = df[df["Metro Area"] == option]
 
     #title for owning/renting    
@@ -144,7 +144,7 @@ def run():
     
 
     ###FIFTH/SIXTH FIGURE - HISTOGRAM
-    #buiding union membership line graph looking at HRHTYPE
+    #buiding union membership histograms looking at HRHTYPE
     df_selected_metro3 = df[df["Metro Area"] == option]
     #labels for household type
     household_type = {
@@ -186,7 +186,7 @@ def run():
     st.plotly_chart(fig3nu) 
 
     ###SEVENTH/EIGHTH FIGURE - HISTOGRAM
-    #buiding union membership line graph looking at PEEDUCA
+    #buiding union membership histograms looking at PEEDUCA
     df_selected_metro4 = df[df["Metro Area"] == option]
 
     #labels for education
@@ -236,13 +236,38 @@ def run():
     st.plotly_chart(fig4u)
     st.plotly_chart(fig4nu)
 
-    ###NINTH FIGURE - VIOLIN
-    #buiding union membership line graph looking at PRFTLF
-    df_selected_metro = df[df["Metro Area"] == option]
+    ###NINTH FIGURE - SCATTERPLOT
+    #buiding union membership scatterplot looking at PRFTLF
+    df_selected_metro5 = df[df["Metro Area"] == option]
+    #labels for PRFTLF
+    full_part = {
+        1: "Full time labor force",
+        2: "Part Time Labor Force",
+        -1: "In Universe, Met No Conditions To Assign"
+    }
+    #labelling union variable
+    df_selected_metro5["PEERNLAB"] = df_selected_metro5["PEERNLAB"].map(union_labels)
+    #labelling full-/part-time variable
+    df_selected_metro5["PRFTLF"] = df_selected_metro5["PRFTLF"].map(full_part)
 
-    ###TENTH/ELEVENTH - SCATTERPLOT
-    #buiding union membership looking at PTERNH1O
-    df_selected_metro = df[df["Metro Area"] == option]
+    metro5_grouped = df_selected_metro5.groupby(["Year","PEERNLAB","PRFTLF"]).size().reset_index(name="Count")
+    #building scatterplot
+    fig5 = px.bar(metro5_grouped, x = "Year", y = "Count", color = "PRFTLF", hover_name="PEERNLAB",
+                  title = f"Full-/Part-time by Union Membership for {option}")
+
+    st.plotly_chart(fig5)
+
+    ###TENTH - Violin
+    #buiding union membership violin looking at PTERNH1O
+    df_selected_metro6 = df[df["Metro Area"] == option]
+    #labelling union variable
+    df_selected_metro6["PEERNLAB"] = df_selected_metro6["PEERNLAB"].map(union_labels)
+
+    #building figure
+    fig6 = px.violin(df_selected_metro6, x = "Year", y = "PTERNH1O", color = "PEERNLAB",
+                     labels = {"PTERNH1O" : "Hourly Wage"})
+
+    st.plotly_chart(fig6)
 
 if __name__ == "__main__":
     run()
