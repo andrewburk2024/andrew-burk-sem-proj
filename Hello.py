@@ -75,8 +75,18 @@ def run():
         2: "Non-Union Member"
     }
 
-    #buiding union membership line graph looking at HEFAMINC
-    df_selected_metro1 = df[df['Metro Area'] == option]
+    ###FIRST FIGURE - LINE
+    #simple line graph to look at number of respondents for union membership or non-membership
+    df_selected_metro1 = df[df["Metro Area"] == option]
+    df_selected_metro1["PEERNLAB"] = df_selected_metro1["PEERNLAB"].map(union_labels)
+    df_union_grouped = df_selected_metro1.groupby(["Year", "PEERNLAB"]).size().reset_index(name="Count")
+    
+    fig_union = px.line(df_union_grouped, x = "Year", y = "Count", color = "PEERNLAB", title = f"Union Membership over Time for {option}")
+    st.plotly_chart(fig_union)
+
+    ###SECOND/THIRD FIGURE - HISTOGRAM
+    #buiding union membership histogram looking at HEFAMINC
+    df_selected_metro1 = df[df["Metro Area"] == option]
     family_income = {
     1: "Less Than $5,000",
     2: "5,000 To 7,499",
@@ -96,6 +106,7 @@ def run():
     16: "150,000 or More"
     }
 
+    #titles for  total family income figures
     title1u = f"Union Member Total Family Income in Past 12 Months for {option}"
     title1nu = f"Non-Union Member Total Family Income in Past 12 Months for {option}"
     #matching union codes with labels
@@ -103,39 +114,135 @@ def run():
     #matching incomes with labels
     df_selected_metro1["HEFAMINC"] = df_selected_metro1["HEFAMINC"].map(family_income)
 
-    union_data1 = df_selected_metro1[df_selected_metro1['PEERNLAB'] == 'Union Member']
-    non_union_data1 = df_selected_metro1[df_selected_metro1['PEERNLAB'] == 'Non-Union Member']
+    union_data1 = df_selected_metro1[df_selected_metro1["PEERNLAB"] == "Union Member"]
+    non_union_data1 = df_selected_metro1[df_selected_metro1["PEERNLAB"] == "Non-Union Member"]
 
-    #fig1u is union membership incomes (split them because became messy when combined)
-    fig1u = px.histogram(union_data1, x='Year', color='HEFAMINC',
-                      title=title1u, labels={'Year': 'Year', 'HEFAMINC': 'Total Family Income'},
-                      category_orders={'HEFAMINC': list(family_income.values())})
+    #building figures for streamlit
+    fig1u = px.histogram(union_data1, x="Year", color="HEFAMINC",
+                      title=title1u, labels={"Year": "Year", "HEFAMINC": "Total Family Income"},
+                      category_orders={"HEFAMINC": list(family_income.values())})
 
-    fig1nu = px.histogram(non_union_data1, x='Year', color='HEFAMINC',
-                      title=title1nu, labels={'Year': 'Year', 'HEFAMINC': 'Total Family Income'},
-                      category_orders={'HEFAMINC': list(family_income.values())})
+    fig1nu = px.histogram(non_union_data1, x="Year", color="HEFAMINC",
+                      title=title1nu, labels={"Year": "Year", "HEFAMINC": "Total Family Income"},
+                      category_orders={"HEFAMINC": list(family_income.values())})
 
     st.plotly_chart(fig1u)
     st.plotly_chart(fig1nu)
 
-    #buiding union membership line graph looking at HETENURE
-    df_selected_metro = df[df['Metro Area'] == option]
-    title1u = f"Union Member Total Family Income in Past 12 Months for {option}"
-    title1nu = f"Non-Union Member Total Family Income in Past 12 Months for {option}"
+    ###FOURTH FIGURE - BAR
+    #buiding union membership looking at HETENURE
+    df_selected_metro2 = df[df["Metro Area"] == option]
 
+    #title for owning/renting    
+    title2 = f"Non-Union and Union Member Own or Rent for {option}"
+    housing_labels= {
+        "3": "Occupied without payment of cash rent",
+        "-1": "Not in Universe",
+        "2": "Rented for cash",
+        "1": "Owned Or Being Bought By A Hh Member"
+    }
+    
 
-
+    ###FIFTH/SIXTH FIGURE - HISTOGRAM
     #buiding union membership line graph looking at HRHTYPE
-    df_selected_metro = df[df['Metro Area'] == option]
+    df_selected_metro3 = df[df["Metro Area"] == option]
+    #labels for household type
+    household_type = {
+        6: "Civilian Male Primary Individual",
+        -1: "In Universe, Met No Conditions To Assign",
+        5: "Primary Family Hhlder-Rp In AF,unmar.",
+        8: "Primary Individual Hhld-Rp In AF",
+        10: "Grp Quarters Without Family",
+        2: "Husb/Wife Prim. Family(either/Both AF)",
+        3: "Unmarried Civilian Male-Prim Fam Hhlder",
+        7: "Civilian Female Primary Individual",
+        1: "Husband/Wife Primary Family(neither AF)",
+        4: "Unmarried Civ. Female-Prim Fam Hhlder",
+        0: "Non-Interview Household",
+        9: "Group Quarters With Family"}
+    
+    #titles for household type figures
+    title3u = f"Union Member Household Type for {option}"
+    title3nu = f"Non-Union Member Household Type for {option}"
 
+    #mapping union labels for this figure
+    df_selected_metro3["PEERNLAB"] = df_selected_metro3["PEERNLAB"].map(union_labels) 
+    #mapping household types for this figure
+    df_selected_metro3["HRHTYPE"] = df_selected_metro3["HRHTYPE"].map(household_type) 
+    #splitting data for their respective figures
+    union_data3 = df_selected_metro3[df_selected_metro3["PEERNLAB"] == "Union Member"]
+    non_union_data3 = df_selected_metro3[df_selected_metro3["PEERNLAB"] == "Non-Union Member"]
+
+    #building figures for streamlit
+    fig3u = px.histogram(union_data3, x="Year", color="HRHTYPE",
+                      title=title3u, labels={"Year": "Year", "HRHTYPE": "Family Type"},
+                      category_orders={"HRHTYPE": list(household_type.values())})
+
+    fig3nu = px.histogram(non_union_data3, x="Year", color="HRHTYPE",
+                      title=title3nu, labels={"Year": "Year", "HRHTYPE": "Family Type"},
+                      category_orders={"HRHTYPE": list(household_type.values())})
+
+    st.plotly_chart(fig3u)
+    st.plotly_chart(fig3nu) 
+
+    ###SEVENTH/EIGHTH FIGURE - HISTOGRAM
     #buiding union membership line graph looking at PEEDUCA
-    df_selected_metro = df[df['Metro Area'] == option]
+    df_selected_metro4 = df[df["Metro Area"] == option]
 
+    #labels for education
+    education = {
+        46: "DOCTORATE DEGREE(EX:PhD,EdD)",
+      33: "5th Or 6th Grade",
+      44: "MASTER'S DEGREE(EX:MA,MS,MEng,MEd,MSW)",
+      39: "High School Grad-Diploma Or Equiv (ged)",
+      42: "Associate Deg.-Academic Program",
+      31: "Less Than 1st Grade",
+      38: "12th Grade No Diploma",
+      40: "Some College But No Degree",
+      -1: "Not in Universe",
+      32: "1st,2nd,3rd Or 4th Grade",
+      43: "Bachelor's Degree(ex:ba,ab,bs)",
+      37: "11th Grade",
+      45: "Professional School Deg(ex:md,dds,dvm)",
+      36: "10th Grade",
+      35: "9th Grade",
+      34: "7th Or 8th Grade",
+      41: "Associate Degree-Occupational/Vocationl"
+    }
+
+    #titles for the figures
+    title4u = f"Union Member Education for {option}"
+    title4nu = f"Non-Union Member Education for {option}"
+
+    #mapping union labels for this figure
+    df_selected_metro4["PEERNLAB"] = df_selected_metro4["PEERNLAB"].map(union_labels)
+    #mapping education for this figure
+    df_selected_metro4["PEEDUCA"] = df_selected_metro4["PEEDUCA"].map(education)
+
+    #splitting the data for figure
+    union_data4 = df_selected_metro4[df_selected_metro4["PEERNLAB"] == "Union Member"]
+    non_union_data4 = df_selected_metro4[df_selected_metro4["PEERNLAB"] == "Non-Union Member"]
+
+    #figures for education
+    fig4u = px.histogram(union_data4, x="Year", color="PEEDUCA",
+                      title=title4u, labels={"Year": "Year", "PEEDUCA": "Education"},
+                      category_orders={"PEEDUCA": list(household_type.values())})
+
+    fig4nu = px.histogram(non_union_data4, x="Year", color="PEEDUCA",
+                      title=title4nu, labels={"Year": "Year", "PEEDUCA": "Education"},
+                      category_orders={"PEEDUCA": list(household_type.values())})
+
+
+    st.plotly_chart(fig4u)
+    st.plotly_chart(fig4nu)
+
+    ###NINTH FIGURE - VIOLIN
     #buiding union membership line graph looking at PRFTLF
-    df_selected_metro = df[df['Metro Area'] == option]
+    df_selected_metro = df[df["Metro Area"] == option]
 
-    #buiding union membership line graph looking at PTERNH1O
-    df_selected_metro = df[df['Metro Area'] == option]
+    ###TENTH/ELEVENTH - SCATTERPLOT
+    #buiding union membership looking at PTERNH1O
+    df_selected_metro = df[df["Metro Area"] == option]
 
 if __name__ == "__main__":
     run()
