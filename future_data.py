@@ -319,7 +319,7 @@ def fetch_census_data(year, month):
 def update_data(csv_path):
     latest_year = 0
     latest_month = 0
-
+#check the csv for the latest month and year
     if os.path.exists(csv_path):
         df = pd.read_csv(csv_path)
         latest_year = df['Year'].max()
@@ -327,17 +327,17 @@ def update_data(csv_path):
 
     print("Latest Year:", latest_year)
     print("Latest Month:", latest_month)
-
+#pull current month and year
     now = datetime.now()
     current_year = now.year
     current_month = now.strftime("%b").lower()
-
+#compare csv month and year with latest month and year
     for year in range(latest_year, current_year + 1):
         start_month = latest_month if year == latest_year else "jan"
         end_month = current_month if year == current_year else "dec"
         for month in get_months(start_month, end_month):
             df = fetch_census_data(year, month)
-            if df is not None:
+            if df is not None: #if the check pulled a year and month then proceed
                 with open(csv_path, 'a') as f:
                     df.to_csv(f, header=f.tell()==0, index=False)
                 print(f"Data for {year}-{month} fetched and CSV updated successfully!")
