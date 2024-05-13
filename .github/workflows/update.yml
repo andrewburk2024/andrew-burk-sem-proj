@@ -2,7 +2,7 @@ name: Monthly Data Update
 
 on:
   schedule:
-    - cron: '0 0 15 * *'  # Run every day at midnight
+    - cron: '0 0 15 * *' 
 
 jobs:
   update_data:
